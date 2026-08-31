@@ -1,0 +1,37 @@
+name: Build FlymeNotifyIconFix APK
+
+on:
+  push:
+    branches: [master]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Install Gradle manually (bypass gradle-actions)
+        run: |
+          curl -sL --max-time 180 -o /tmp/gradle.zip "https://services.gradle.org/distributions/gradle-8.7-bin.zip"
+          unzip -q /tmp/gradle.zip -d /opt/gradle
+
+      - name: Build release APK
+        run: |
+          set -o pipefail
+          export PATH=/opt/gradle/gradle-8.7/bin:$PATH
+          export JAVA_HOME=$JAVA_HOME_17_X64
+          gradle assembleRelease --no-daemon
+
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: FlymeNotifyIconFix
+          path: app/build/outputs/apk/release/*.apk
