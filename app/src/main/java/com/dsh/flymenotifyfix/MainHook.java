@@ -65,7 +65,7 @@ public class MainHook implements IXposedHookLoadPackage {
 
                                 Resources res = ctx.getResources();
                                 int resId = res.getIdentifier(
-                                        "mz_stat_sys_" + pkg.toLowerCase().replace(/[^a-z0-9]/g, '_'),
+                                        "mz_stat_sys_" + pkg.toLowerCase().replaceAll("[^a-z0-9]", "_"),
                                         "drawable", MODULE_PKG);
                                 if (resId != 0) {
                                     Icon newIcon = Icon.createWithResource(ctx, resId);
