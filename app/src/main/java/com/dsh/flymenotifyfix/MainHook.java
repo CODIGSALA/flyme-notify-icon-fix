@@ -51,7 +51,7 @@ public class MainHook implements IXposedHookLoadPackage {
                                 Object self = param.thisObject;
                                 StatusBarNotification sbn = (StatusBarNotification) param.args[0];
                                 if (sbn == null) return;
-                                String pkg = sbn.getOrigPackageName();
+                                String pkg = sbn.getPackageName();
                                 if (pkg == null) return;
 
                                 Map<String, Integer> map = (Map<String, Integer>) XposedHelpers.getObjectField(self, "mCustomizedIconResIdMap");
@@ -69,7 +69,7 @@ public class MainHook implements IXposedHookLoadPackage {
                                         "drawable", MODULE_PKG);
                                 if (resId != 0) {
                                     Icon newIcon = Icon.createWithResource(ctx, resId);
-                                    sbn.getNotification().setSmallIcon(newIcon);
+                                    XposedHelpers.callMethod(sbn.getNotification(), "setSmallIcon", newIcon);
                                     XposedBridge.log(TAG + ": 替换 " + pkg + " -> resId=" + resId);
                                 }
                             } catch (Throwable t) {
@@ -89,7 +89,7 @@ public class MainHook implements IXposedHookLoadPackage {
             ApplicationInfo appInfo = ctx.getPackageManager().getApplicationInfo(MODULE_PKG, 0);
             String apkPath = appInfo.sourceDir;
             AssetManager am = ctx.getAssets();
-            am.addAssetPath(apkPath);
+            XposedHelpers.callMethod(am, "addAssetPath", apkPath);
             assetAdded = true;
             XposedBridge.log(TAG + ": addAssetPath " + apkPath);
         } catch (Throwable t) {
