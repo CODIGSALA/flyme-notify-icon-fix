@@ -3,6 +3,7 @@ pluginManagement {
         gradlePluginPortal()
         maven { url 'https://dl.google.com/dl/android/maven2/' }
         mavenCentral()
+        maven { url 'https://api.xposed.info/' }
     }
 }
 dependencyResolutionManagement {
@@ -10,6 +11,7 @@ dependencyResolutionManagement {
     repositories {
         maven { url 'https://dl.google.com/dl/android/maven2/' }
         mavenCentral()
+        maven { url 'https://api.xposed.info/' }
     }
 }
 rootProject.name = "FlymeNotifyIconFix"
