@@ -50,6 +50,7 @@ public class MainHook implements IXposedHookLoadPackage {
                             try {
                                 Object self = param.thisObject;
                                 StatusBarNotification sbn = (StatusBarNotification) param.args[0];
+                                XposedBridge.log(TAG + ": 方法被调用 pkg=" + (sbn==null?"null":sbn.getPackageName()));
                                 if (sbn == null) return;
                                 String pkg = sbn.getPackageName();
                                 if (pkg == null) return;
@@ -63,10 +64,12 @@ public class MainHook implements IXposedHookLoadPackage {
                                 Context ctx = (Context) XposedHelpers.getObjectField(self, "mContext");
                                 ensureAssets(ctx);
 
-                                Resources res = ctx.getResources();
+                                android.content.res.AssetManager am2 = ctx.getAssets();
+                                Resources res = new Resources(am2, ctx.getResources().getDisplayMetrics(), ctx.getResources().getConfiguration());
                                 int resId = res.getIdentifier(
                                         "mz_stat_sys_" + pkg.toLowerCase().replaceAll("[^a-z0-9]", "_"),
                                         "drawable", MODULE_PKG);
+                                XposedBridge.log(TAG + ": 查询 " + pkg + " resId=" + resId);
                                 if (resId != 0) {
                                     Icon newIcon = Icon.createWithResource(ctx, resId);
                                     XposedHelpers.callMethod(sbn.getNotification(), "setSmallIcon", newIcon);
